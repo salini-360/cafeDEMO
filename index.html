@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafe Galaxy | Brewed with Passion</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- CSS VARIABLES & CORE --- */
+        :root {
+            --forest-green: #1b3022;
+            --warm-beige: #f4e9dc;
+            --soft-orange: #e67e22;
+            --matte-black: #1a1a1a;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.15);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--warm-beige);
+            color: var(--matte-black);
+            overflow-x: hidden;
+        }
+
+        /* --- LOADING SCREEN --- */
+        #loader {
+            position: fixed; inset: 0; background: var(--forest-green);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999; transition: 0.6s ease;
+        }
+        .loader-icon {
+            font-size: 3rem; color: var(--soft-orange);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.1); } }
+
+        /* --- SCROLL PROGRESS --- */
+        #progress-container {
+            position: fixed; top: 0; width: 100%; height: 5px; z-index: 1001;
+        }
+        #progress-bar {
+            height: 100%; width: 0%; background: var(--soft-orange);
+            box-shadow: 0 0 10px var(--soft-orange);
+        }
+
+        /* --- CUSTOM SCROLLBAR --- */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--warm-beige); }
+        ::-webkit-scrollbar-thumb { background: var(--forest-green); border-radius: 5px; }
+
+        /* --- NAVBAR --- */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 20px 8%;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; transition: var(--transition);
+        }
+        nav.sticky {
+            padding: 12px 8%; background: var(--forest-green);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .logo { 
+            font-family: 'Playfair Display', serif; font-size: 1.8rem; 
+            color: var(--white); text-decoration: none; 
+        }
+        .logo span { color: var(--soft-orange); }
+        .nav-links { display: flex; list-style: none; gap: 30px; }
+        .nav-links a { 
+            color: var(--white); text-decoration: none; font-weight: 400;
+            transition: 0.3s; font-size: 0.9rem;
+        }
+        .nav-links a:hover { color: var(--soft-orange); }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh; width: 100%;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; color: var(--white); position: relative;
+        }
+        .hero h1 { 
+            font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 8vw, 5rem);
+            margin-bottom: 10px; opacity: 0; transform: translateY(30px);
+            animation: fadeInUp 1s forwards 0.8s;
+        }
+        .hero p { 
+            font-size: 1.2rem; margin-bottom: 30px; letter-spacing: 2px;
+            opacity: 0; animation: fadeInUp 1s forwards 1s;
+        }
+
+        /* Floating Steam Animation */
+        .steam {
+            position: absolute; bottom: 20%; font-size: 4rem;
+            color: rgba(255,255,255,0.2); animation: steam 5s infinite;
+        }
+        @keyframes steam {
+            0% { transform: translateY(0) scale(1); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+        }
+
+        .btn {
+            padding: 14px 35px; border-radius: 50px; text-decoration: none;
+            font-weight: 600; transition: var(--transition); border: none;
+            display: inline-block; margin: 10px; cursor: pointer;
+        }
+        .btn-view { background: var(--soft-orange); color: var(--white); }
+        .btn-view:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(230, 126, 34, 0.5); }
+        .btn-res { background: transparent; color: var(--white); border: 2px solid var(--white); }
+        .btn-res:hover { background: var(--white); color: var(--forest-green); }
+
+        /* --- ABOUT SECTION --- */
+        section { padding: 100px 10%; }
+        .about-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 50px; align-items: center;
+        }
+        .about-img img { width: 100%; border-radius: 30px; box-shadow: 20px 20px 0 var(--forest-green); }
+        .stats { display: flex; gap: 30px; margin-top: 30px; }
+        .stat-card { text-align: center; }
+        .stat-card h3 { font-size: 2rem; color: var(--soft-orange); }
+
+        /* --- MENU SECTION --- */
+        .menu-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;
+        }
+        .menu-card {
+            background: var(--white); padding: 20px; border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: var(--transition);
+            text-align: center; border: 1px solid rgba(0,0,0,0.03);
+        }
+        .menu-card:hover { transform: translateY(-10px); }
+        .menu-card img { 
+            width: 100%; height: 200px; object-fit: cover; 
+            border-radius: 20px; transition: var(--transition);
+        }
+        .menu-card:hover img { transform: scale(1.05); }
+        .menu-card h3 { margin: 15px 0 5px; font-family: 'Playfair Display', serif; }
+        .menu-card p { font-size: 0.85rem; color: #777; margin-bottom: 15px; }
+        .menu-card .price { font-weight: 700; color: var(--forest-green); font-size: 1.2rem; }
+        
+        /* --- GALLERY --- */
+        .gallery-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .gallery-grid img { 
+            width: 100%; height: 250px; object-fit: cover; 
+            border-radius: 15px; cursor: pointer; transition: 0.3s;
+        }
+        .gallery-grid img:hover { filter: brightness(70%); transform: scale(0.98); }
+
+        /* --- CONTACT & FOOTER --- */
+        .contact-box {
+            background: var(--forest-green); color: var(--white);
+            padding: 60px; border-radius: 40px; display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px;
+        }
+        .contact-form input, .contact-form textarea {
+            width: 100%; padding: 15px; margin-bottom: 15px;
+            border-radius: 10px; border: none; background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        footer {
+            background: var(--matte-black); color: rgba(255,255,255,0.6);
+            padding: 50px 10%; text-align: center;
+        }
+        .socials i { font-size: 1.5rem; margin: 0 15px; color: var(--white); cursor: pointer; transition: 0.3s; }
+        .socials i:hover { color: var(--soft-orange); }
+
+        /* --- ANIMATIONS --- */
+        .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            section { padding: 60px 5%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loader -->
+    <div id="loader"><i class="fas fa-coffee loader-icon"></i></div>
+
+    <!-- Progress Bar -->
+    <div id="progress-container"><div id="progress-bar"></div></div>
+
+    <!-- Navbar -->
+    <nav id="navbar">
+        <a href="#" class="logo">Cafe <span>Galaxy</span></a>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="mobile-toggle" style="color: white;"><i class="fas fa-bars"></i></div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <i class="fas fa-wind steam" style="left: 45%;"></i>
+        <i class="fas fa-wind steam" style="left: 55%; animation-delay: 2s;"></i>
+        <h1>Brewed with Passion</h1>
+        <p>Experience the Taste of Cafe Galaxy</p>
+        <div class="hero-btns">
+            <a href="#menu" class="btn btn-view">View Menu</a>
+            <a href="#contact" class="btn btn-res">Reserve Table</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="reveal">
+        <div class="about-container">
+            <div class="about-img">
+                <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=80" alt="Cafe Interior">
+            </div>
+            <div class="about-content">
+                <h2 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 20px;">Modern Elegance in Every Sip</h2>
+                <p>Located in the heart of the city, Cafe Galaxy is a haven for coffee lovers. We blend traditional techniques with a modern aesthetic to bring you the finest brews and freshest snacks.</p>
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3 class="counter" data-target="50">0</h3>
+                        <p>Happy Customers</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 class="counter" data-target="100">0</h3>
+                        <p>Premium Coffee</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="reveal">
+        <h2 style="text-align: center; font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 50px;">Our Popular Menu</h2>
+        <div class="menu-grid">
+            <!-- Item 1 -->
+            <div class="menu-card">
+                <img src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=500&q=80" alt="Cappuccino">
+                <h3>Cappuccino</h3>
+                <p>Rich espresso topped with smooth steamed milk foam.</p>
+                <span class="price">₹149</span><br><br>
+                <button class="btn btn-view">Order Now</button>
+            </div>
+            <!-- Item 2 -->
+            <div class="menu-card">
+                <img src="https://images.unsplash.com/photo-1571091718767-18b5b1457add?auto=format&fit=crop&w=500&q=80" alt="Burger">
+                <h3>Veg Burger</h3>
+                <p>Crispy patty with fresh veggies and secret sauce.</p>
+                <span class="price">₹199</span><br><br>
+                <button class="btn btn-view">Order Now</button>
+            </div>
+            <!-- Item 3 -->
+            <div class="menu-card">
+                <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=500&q=80" alt="Chocolate Shake">
+                <h3>Chocolate Shake</h3>
+                <p>Thick, creamy and loaded with premium cocoa.</p>
+                <span class="price">₹179</span><br><br>
+                <button class="btn btn-view">Order Now</button>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="reveal">
+        <h2 style="text-align: center; font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 50px;">Galaxy Gallery</h2>
+        <div class="gallery-grid">
+            <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=500&q=80" alt="Coffee Pour">
+            <img src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=500&q=80" alt="Cafe Mug">
+            
+			<img src="https://images.unsplash.com/photo-1525648199074-cee30ba79a4a?auto=format&fit=crop&w=500&q=80" alt="Seating">
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="reveal">
+        <div class="contact-box">
+            <div class="info">
+                <h2 style="font-family: 'Playfair Display', serif; margin-bottom: 20px;">Contact Us</h2>
+                <p><i class="fas fa-map-marker-alt" style="margin-right: 10px;"></i> 123 Galaxy Street, Dindigul</p>
+                <p><i class="fas fa-phone" style="margin-right: 10px; margin-top: 15px;"></i> +91 93601 51808</p>
+                <p><i class="fas fa-clock" style="margin-right: 10px; margin-top: 15px;"></i> 09:00 AM - 10:00 PM</p>
+                <br>
+                <div class="socials">
+                    <i class="fab fa-instagram"></i>
+                    <i class="fab fa-facebook"></i>
+                </div>
+            </div>
+            <div class="contact-form">
+                <input type="text" placeholder="Your Name">
+                <input type="email" placeholder="Your Email">
+                <textarea rows="4" placeholder="How can we help?"></textarea>
+                <button class="btn btn-view" style="width: 100%;">Send Message</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Cafe Galaxy. All rights reserved.</p>
+        <p style="margin-top: 10px; font-size: 0.8rem;">Designed for a Premium Experience.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 1. Loader Logic
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            setTimeout(() => loader.style.display = 'none', 600);
+        });
+
+        // 2. Sticky Navbar & Progress Bar
+        window.onscroll = () => {
+            const nav = document.getElementById('navbar');
+            const progress = document.getElementById('progress-bar');
+            const totalHeight = document.body.scrollHeight - window.innerHeight;
+            const percentage = (window.pageYOffset / totalHeight) * 100;
+            
+            progress.style.width = percentage + "%";
+
+            if (window.scrollY > 50) {
+                nav.classList.add('sticky');
+            } else {
+                nav.classList.remove('sticky');
+            }
+
+            // Scroll Reveal Activation
+            reveal();
+        };
+
+        // 3. Scroll Reveal Function
+        function reveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(el => {
+                const windowHeight = window.innerHeight;
+                const revealTop = el.getBoundingClientRect().top;
+                if (revealTop < windowHeight - 100) {
+                    el.classList.add('active');
+                }
+            });
+        }
+
+        // 4. Animated Counters
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200;
+
+        counters.forEach(counter => {
+            const updateCount = () => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const inc = target / speed;
+
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + inc);
+                    setTimeout(updateCount, 1);
+                } else {
+                    counter.innerText = target + "+";
+                }
+            };
+
+            // Trigger when visible
+            window.addEventListener('scroll', function triggerCounter() {
+                const rect = counter.getBoundingClientRect();
+                if (rect.top < window.innerHeight) {
+                    updateCount();
+                    window.removeEventListener('scroll', triggerCounter);
+                }
+            });
+        });
+
+        // Initialize reveal on load
+        reveal();
+    </script>
+</body>
+</html>
